@@ -21,6 +21,17 @@ class ImageComparatorTest extends TestCase
         $this->imageComparator = new ImageComparator();
     }
 
+    private function withErrorsIgnored(callable $callback): void
+    {
+        set_error_handler(static fn (): bool => true);
+
+        try {
+            $callback();
+        } finally {
+            restore_error_handler();
+        }
+    }
+
     #[DataProvider('similarImagesProvider')]
     public function testCompareSimilarImages(string $image1, string $image2, float $expectedPercentage): void
     {
@@ -88,7 +99,7 @@ class ImageComparatorTest extends TestCase
         $this->expectException(ImageResourceException::class);
         $this->expectException(Exception::class);
 
-        $this->imageComparator->compare('image', 'image');
+        $this->withErrorsIgnored(fn () => $this->imageComparator->compare('image', 'image'));
     }
 
     public function testDetectShouldThrowException(): void
@@ -96,7 +107,7 @@ class ImageComparatorTest extends TestCase
         $this->expectException(ImageResourceException::class);
         $this->expectException(Exception::class);
 
-        $this->imageComparator->detect('image', 'image');
+        $this->withErrorsIgnored(fn () => $this->imageComparator->detect('image', 'image'));
     }
 
     public function testSquareImage(): void
@@ -231,7 +242,9 @@ class ImageComparatorTest extends TestCase
     {
         $this->expectException(ImageResourceException::class);
 
-        $this->imageComparator->compare('tests/files/document.txt', 'tests/files/document2.txt');
+        $this->withErrorsIgnored(
+            fn () => $this->imageComparator->compare('tests/files/document.txt', 'tests/files/document2.txt')
+        );
     }
 
     #[DataProvider('imageFormatsProvider')]
@@ -276,7 +289,12 @@ class ImageComparatorTest extends TestCase
     {
         $this->expectException(ImageResourceException::class);
 
-        $this->imageComparator->compare('tests/images/flower.jpg', 'tests/images/unsupported-image-format.tif');
+        $this->withErrorsIgnored(
+            fn () => $this->imageComparator->compare(
+                'tests/images/flower.jpg',
+                'tests/images/unsupported-image-format.tif'
+            )
+        );
     }
 
     public static function differentImagesProvider(): array

@@ -269,13 +269,13 @@ class ImageComparator
             return $image;
         }
 
-        $imageData = @file_get_contents($image);
+        $imageData = file_get_contents($image);
 
         if (false === $imageData) {
             throw new ImageResourceException('Could not create an image resource from file');
         }
 
-        $normalizedImage = @imagecreatefromstring($imageData);
+        $normalizedImage = imagecreatefromstring($imageData);
 
         if (false === $normalizedImage) {
             throw new ImageResourceException('Could not create an image resource from file');
