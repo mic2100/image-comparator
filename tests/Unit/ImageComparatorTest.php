@@ -201,7 +201,7 @@ class ImageComparatorTest extends TestCase
         $image = 'test';
         $filePath = 'results.csv';
         $file = fopen($filePath, 'w');
-        fputcsv($file, ['Image_First', 'Image_Second', 'First_Result']);
+        fputcsv($file, ['Image_First', 'Image_Second', 'First_Result'], escape: '\\');
 
         $results = [];
         for ($i = 1; $i <= 50; $i++) {
@@ -214,7 +214,7 @@ class ImageComparatorTest extends TestCase
                 20
             );
             $results[] = $result;
-            fputcsv($file, [$image1, $image2, $result]);
+            fputcsv($file, [$image1, $image2, $result], escape: '\\');
         }
 
         fclose($file);

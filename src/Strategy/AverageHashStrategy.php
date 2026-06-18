@@ -23,7 +23,7 @@ class AverageHashStrategy implements HashStrategy
         $totalPixelsValue = BigDecimal::of(array_sum($pixels));
         $pixelCount = BigDecimal::of(count($pixels));
 
-        $averagePixelsValue = $totalPixelsValue->dividedBy($pixelCount, 0, RoundingMode::DOWN);
+        $averagePixelsValue = $totalPixelsValue->dividedBy($pixelCount, 0, RoundingMode::Down);
 
         foreach ($pixels as $pixel) {
             if (BigDecimal::of($pixel)->isGreaterThan($averagePixelsValue)) {

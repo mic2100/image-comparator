@@ -104,7 +104,7 @@ class ImageComparator
             }
         }
 
-        $percentage = $similarity->dividedBy($hashLength, $precision, RoundingMode::HALF_UP)
+        $percentage = $similarity->dividedBy($hashLength, $precision, RoundingMode::HalfUp)
             ->multipliedBy(100);
 
         return $percentage->toFloat();
@@ -215,18 +215,18 @@ class ImageComparator
         // calculating the part of the image to use for new image
         if ($width->isGreaterThan($height)) {
             $x = BigDecimal::zero()->toInt();
-            $y = $width->minus($height)->dividedBy(BigDecimal::of(2), 0, RoundingMode::HALF_UP)
+            $y = $width->minus($height)->dividedBy(BigDecimal::of(2), 0, RoundingMode::HalfUp)
                 ->toInt();
             $xRect = BigDecimal::zero()->toInt();
-            $yRect = $width->minus($height)->dividedBy(BigDecimal::of(2), 0, RoundingMode::HALF_UP)
+            $yRect = $width->minus($height)->dividedBy(BigDecimal::of(2), 0, RoundingMode::HalfUp)
                 ->plus($height)
                 ->toInt();
             $thumbSize = $width->toInt();
         } else {
-            $x = $height->minus($width)->dividedBy(BigDecimal::of(2), 0, RoundingMode::HALF_UP)
+            $x = $height->minus($width)->dividedBy(BigDecimal::of(2), 0, RoundingMode::HalfUp)
                 ->toInt();
             $y = BigDecimal::zero()->toInt();
-            $xRect = $height->minus($width)->dividedBy(BigDecimal::of(2), 0, RoundingMode::HALF_UP)
+            $xRect = $height->minus($width)->dividedBy(BigDecimal::of(2), 0, RoundingMode::HalfUp)
                 ->plus($width)
                 ->toInt();
             $yRect = BigDecimal::zero()->toInt();
@@ -269,13 +269,13 @@ class ImageComparator
             return $image;
         }
 
-        $imageData = file_get_contents($image);
+        $imageData = @file_get_contents($image);
 
         if (false === $imageData) {
             throw new ImageResourceException('Could not create an image resource from file');
         }
 
-        $normalizedImage = imagecreatefromstring($imageData);
+        $normalizedImage = @imagecreatefromstring($imageData);
 
         if (false === $normalizedImage) {
             throw new ImageResourceException('Could not create an image resource from file');
@@ -305,10 +305,10 @@ class ImageComparator
             }
         }
 
-        $hashSimilarity = $similarity->dividedBy($totalBits, $precision, RoundingMode::HALF_UP)
+        $hashSimilarity = $similarity->dividedBy($totalBits, $precision, RoundingMode::HalfUp)
             ->multipliedBy(BigDecimal::of(100));
-        $hashSimilarity = BigDecimal::of($hashSimilarity)->multipliedBy($colorSimilarity);
-        $hashSimilarity = $hashSimilarity->toScale($precision, RoundingMode::HALF_UP);
+        $hashSimilarity = BigDecimal::of($hashSimilarity)->multipliedBy((string)$colorSimilarity);
+        $hashSimilarity = $hashSimilarity->toScale($precision, RoundingMode::HalfUp);
 
         return $hashSimilarity->toFloat();
     }
@@ -350,7 +350,7 @@ class ImageComparator
                 $grayScale = $r->multipliedBy('0.299')
                     ->plus($g->multipliedBy('0.587'))
                     ->plus($b->multipliedBy('0.114'))
-                    ->toScale(0, RoundingMode::HALF_UP);
+                    ->toScale(0, RoundingMode::HalfUp);
 
                 $pixels[] = $grayScale->toInt();
             }
